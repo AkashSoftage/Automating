@@ -1,0 +1,29 @@
+name: Security Vulnerability Scan
+
+on:
+  push:
+    branches:
+      - main  # Adjust based on your branch setup
+
+jobs:
+  security_scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Install Snyk CLI
+        run: |
+          npm install -g snyk
+
+      - name: Authenticate Snyk
+        run: snyk auth YOUR_SNYK_API_TOKEN  # Replace with your Snyk API token
+
+      - name: Run Snyk Security Scan
+        run: snyk test --all-projects --json > snyk-report.json
+
+      - name: Upload Snyk Report
+        uses: actions/upload-artifact@v2
+        with:
+          name: snyk-report
+          path: snyk-report.json
